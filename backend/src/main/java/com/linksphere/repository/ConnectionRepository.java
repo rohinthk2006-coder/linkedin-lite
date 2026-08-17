@@ -18,9 +18,9 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long> {
 
     List<Connection> findByReceiverIdAndStatus(Long receiverId, ConnectionStatus status);
 
-    @Query("SELECT c FROM Connection c WHERE (c.sender.id = :userId OR c.receiver.id = :userId) AND c.status = 'ACCEPTED'")
+    @Query("SELECT c FROM Connection c WHERE (c.sender.id = :userId OR c.receiver.id = :userId) AND c.status = com.linksphere.enums.ConnectionStatus.ACCEPTED")
     List<Connection> findAcceptedConnectionsForUser(@Param("userId") Long userId);
 
-    @Query("SELECT COUNT(c) FROM Connection c WHERE (c.sender.id = :userId OR c.receiver.id = :userId) AND c.status = 'ACCEPTED'")
+    @Query("SELECT COUNT(c) FROM Connection c WHERE (c.sender.id = :userId OR c.receiver.id = :userId) AND c.status = com.linksphere.enums.ConnectionStatus.ACCEPTED")
     long countAcceptedConnections(@Param("userId") Long userId);
 }
