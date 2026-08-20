@@ -26,13 +26,14 @@ public class PostController {
     private final PostService postService;
     private final SecurityUtils securityUtils;
 
-    @PostMapping("/posts")
-    @Operation(summary = "Create a new professional post")
+    @PostMapping(value = "/posts", consumes = "multipart/form-data")
+    @Operation(summary = "Create a new professional post with optional image")
     public ResponseEntity<ApiResponse<PostDto>> createPost(
-            @Valid @RequestBody CreatePostRequest request,
+            @RequestParam("content") String content,
+            @RequestParam(value = "image", required = false) org.springframework.web.multipart.MultipartFile image,
             @CurrentUser UserPrincipal principal) {
         User currentUser = securityUtils.getAuthenticatedUser(principal);
-        PostDto created = postService.createPost(request, currentUser);
+        PostDto created = postService.createPost(content, image, currentUser);
         return new ResponseEntity<>(ApiResponse.success("Post published successfully", created), HttpStatus.CREATED);
     }
 

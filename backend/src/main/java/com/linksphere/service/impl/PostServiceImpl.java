@@ -32,13 +32,19 @@ public class PostServiceImpl implements PostService {
     private final ConnectionRepository connectionRepository;
     private final NotificationService notificationService;
     private final EntityDtoMapper mapper;
+    private final com.linksphere.service.FileStorageService fileStorageService;
 
     @Override
     @Transactional
-    public PostDto createPost(CreatePostRequest request, User currentUser) {
+    public PostDto createPost(String content, org.springframework.web.multipart.MultipartFile image, User currentUser) {
+        String imageUrl = null;
+        if (image != null && !image.isEmpty()) {
+            imageUrl = fileStorageService.storeFile(image);
+        }
+
         Post post = Post.builder()
-                .content(request.getContent())
-                .imageUrl(request.getImageUrl())
+                .content(content)
+                .imageUrl(imageUrl)
                 .author(currentUser)
                 .build();
 

@@ -7,24 +7,29 @@ export const CreatePostBox = ({ onPostCreated }) => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [content, setContent] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [showImageInput, setShowImageInput] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!content.trim()) return;
+    if (!content.trim() && !imageFile) return;
 
     setLoading(true);
     try {
-      const res = await api.post('/posts', {
-        content: content.trim(),
-        imageUrl: imageUrl.trim() || null,
-      });
+      const formData = new FormData();
+      formData.append('content', content.trim());
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
+
+      const res = await api.post('/posts', formData);
 
       if (res.data.success) {
         setContent('');
-        setImageUrl('');
+        setImageFile(null);
+        setImagePreview(null);
         setShowImageInput(false);
         setIsOpen(false);
         if (onPostCreated) onPostCreated(res.data.data);
@@ -96,16 +101,21 @@ export const CreatePostBox = ({ onPostCreated }) => {
 
               {showImageInput && (
                 <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">Image URL</label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Upload Image</label>
                   <input
-                    type="url"
-                    placeholder="https://images.unsplash.com/..."
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                    className="w-full text-xs p-2 border border-gray-300 rounded-md focus:outline-hidden focus:border-blue-500"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        setImageFile(file);
+                        setImagePreview(URL.createObjectURL(file));
+                      }
+                    }}
+                    className="w-full text-xs p-2 border border-gray-300 rounded-md focus:outline-hidden focus:border-blue-500 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                   />
-                  {imageUrl && (
-                    <img src={imageUrl} alt="Preview" className="mt-2 h-32 w-full object-cover rounded-md" />
+                  {imagePreview && (
+                    <img src={imagePreview} alt="Preview" className="mt-2 h-32 w-full object-cover rounded-md" />
                   )}
                 </div>
               )}
@@ -130,7 +140,7 @@ export const CreatePostBox = ({ onPostCreated }) => {
                   </button>
                   <button
                     type="submit"
-                    disabled={!content.trim() || loading}
+                    disabled={(!content.trim() && !imageFile) || loading}
                     className="px-5 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-full hover:bg-blue-700 disabled:opacity-50 transition flex items-center space-x-1"
                   >
                     {loading ? (

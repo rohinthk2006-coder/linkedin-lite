@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface PostService {
-    PostDto createPost(CreatePostRequest request, User currentUser);
+    PostDto createPost(String content, org.springframework.web.multipart.MultipartFile image, User currentUser);
     Page<PostDto> getFeed(int page, int size, User currentUser);
     List<PostDto> getUserPosts(Long userId, User currentUser);
     PostDto getPostById(Long id, User currentUser);
