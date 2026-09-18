@@ -10,6 +10,7 @@ import { NotificationsView } from './components/NotificationsView';
 import { SearchView } from './components/SearchView';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { IntroPage } from './pages/IntroPage';
 import api from './services/api';
 import { Sparkles, TrendingUp, Users, ExternalLink } from 'lucide-react';
 
@@ -276,23 +277,31 @@ const MainLayout = () => {
 const AppContent = () => {
   const { user, loading } = useAuth();
   const [authView, setAuthView] = useState('login'); // 'login' or 'register'
+  const [showIntro, setShowIntro] = useState(true);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center text-white font-semibold">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold animate-pulse">
+      <div className="min-h-screen bg-[#040816] flex items-center justify-center text-white font-semibold">
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold animate-pulse shadow-lg shadow-blue-500/30">
             LS
           </div>
-          <span>Loading LinkSphere...</span>
+          <span className="text-slate-300 text-sm tracking-wide">Loading LinkSphere...</span>
         </div>
       </div>
     );
   }
 
+  if (showIntro) {
+    return <IntroPage onComplete={() => setShowIntro(false)} />;
+  }
+
   if (!user) {
     return authView === 'login' ? (
-      <LoginPage onNavigateRegister={() => setAuthView('register')} />
+      <LoginPage 
+        onNavigateRegister={() => setAuthView('register')} 
+        onReplayIntro={() => setShowIntro(true)}
+      />
     ) : (
       <RegisterPage onNavigateLogin={() => setAuthView('login')} />
     );
