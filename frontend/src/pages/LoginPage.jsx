@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { LogIn, UserCheck, Shield, Sparkles } from 'lucide-react';
+import { LogIn, UserCheck, Shield, Sparkles, PlayCircle } from 'lucide-react';
+import introLogo from '../assets/linksphere-intro.png';
 
-export const LoginPage = ({ onNavigateRegister }) => {
+export const LoginPage = ({ onNavigateRegister, onReplayIntro }) => {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -42,8 +43,13 @@ export const LoginPage = ({ onNavigateRegister }) => {
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center z-10">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 text-white font-black text-2xl shadow-xl shadow-blue-500/30 mb-4">
-          LS
+        <div className="relative inline-block mb-3 cursor-pointer group" onClick={onReplayIntro} title="Click to replay intro animation">
+          <div className="absolute -inset-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur-md opacity-50 group-hover:opacity-80 transition duration-300"></div>
+          <img
+            src={introLogo}
+            alt="LinkSphere Logo"
+            className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover shadow-xl border border-white/20"
+          />
         </div>
         <h1 className="text-3xl font-extrabold text-white tracking-tight">
           Welcome to Link<span className="text-blue-500">Sphere</span>
@@ -51,6 +57,15 @@ export const LoginPage = ({ onNavigateRegister }) => {
         <p className="mt-2 text-sm text-slate-400">
           The next-generation professional networking platform
         </p>
+        {onReplayIntro && (
+          <button
+            onClick={onReplayIntro}
+            className="mt-2 inline-flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 transition-colors"
+          >
+            <PlayCircle className="w-3.5 h-3.5" />
+            <span>Watch Intro</span>
+          </button>
+        )}
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md z-10 px-4">
