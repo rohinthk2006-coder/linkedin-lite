@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { UserPlus, ArrowLeft } from 'lucide-react';
+import introLogo from '../assets/linksphere-intro.png';
 
 export const RegisterPage = ({ onNavigateLogin }) => {
   const { register } = useAuth();
@@ -35,8 +36,13 @@ export const RegisterPage = ({ onNavigateLogin }) => {
       <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center z-10">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 text-white font-black text-2xl shadow-xl shadow-blue-500/30 mb-4">
-          LS
+        <div className="relative inline-block mb-3">
+          <div className="absolute -inset-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur-md opacity-50"></div>
+          <img
+            src={introLogo}
+            alt="LinkSphere Logo"
+            className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover shadow-xl border border-white/20"
+          />
         </div>
         <h1 className="text-3xl font-extrabold text-white tracking-tight">
           Join Link<span className="text-blue-500">Sphere</span>
