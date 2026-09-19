@@ -55,6 +55,17 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success("Profile updated successfully", updated));
     }
 
+    @PostMapping(value = "/{id}/photo", consumes = "multipart/form-data")
+    @Operation(summary = "Upload profile photo from media")
+    public ResponseEntity<ApiResponse<UserDto>> uploadProfilePhoto(
+            @PathVariable Long id,
+            @RequestParam("file") org.springframework.web.multipart.MultipartFile file,
+            @CurrentUser UserPrincipal principal) {
+        User currentUser = securityUtils.getAuthenticatedUser(principal);
+        UserDto updated = userService.uploadProfilePhoto(id, file, currentUser);
+        return ResponseEntity.ok(ApiResponse.success("Profile photo uploaded successfully", updated));
+    }
+
     @GetMapping("/search")
     @Operation(summary = "Search users by name, headline, location, or skill")
     public ResponseEntity<ApiResponse<Page<UserSummaryDto>>> searchUsers(
