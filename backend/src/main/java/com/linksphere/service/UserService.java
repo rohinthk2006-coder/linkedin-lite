@@ -14,4 +14,5 @@ public interface UserService {
     UserDto updateProfile(Long id, UpdateProfileRequest request, User currentUser);
     Page<UserSummaryDto> searchUsers(String keyword, int page, int size, User currentUser);
     List<UserSummaryDto> getRecommendedUsers(int page, int size, User currentUser);
+    UserDto uploadProfilePhoto(Long id, org.springframework.web.multipart.MultipartFile file, User currentUser);
 }
