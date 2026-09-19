@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { CreatePostBox } from './components/CreatePostBox';
@@ -8,21 +9,27 @@ import { ProfileSections } from './components/ProfileSections';
 import { NetworkView } from './components/NetworkView';
 import { NotificationsView } from './components/NotificationsView';
 import { SearchView } from './components/SearchView';
+import { ProjectsView } from './components/ProjectsView';
+import { JobsView } from './components/JobsView';
+import { MessagesView } from './components/MessagesView';
+import { RightSidebar } from './components/RightSidebar';
+import { SkeletonPost } from './components/SkeletonLoader';
+import { mockFeedPosts } from './data/mockFeedPosts';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { IntroPage } from './pages/IntroPage';
 import api from './services/api';
-import { Sparkles, TrendingUp, Users, ExternalLink } from 'lucide-react';
 
 const MainLayout = () => {
   const { user } = useAuth();
-  const [currentTab, setCurrentTab] = useState('feed'); // 'feed', 'network', 'profile', 'notifications', 'search'
+  const [currentTab, setCurrentTab] = useState('feed'); // 'feed', 'network', 'jobs', 'projects', 'messages', 'notifications', 'profile', 'search'
   const [searchQuery, setSearchQuery] = useState('');
   
   // Profile state for viewing current user or other selected user
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [targetProfile, setTargetProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
+  const [profileInitialAction, setProfileInitialAction] = useState(null);
 
   // Feed state
   const [posts, setPosts] = useState([]);
@@ -51,11 +58,17 @@ const MainLayout = () => {
     setLoadingPosts(true);
     try {
       const res = await api.get('/posts/feed');
-      if (res.data.success) {
-        setPosts(res.data.data.content);
+      if (res.data.success && res.data.data?.content?.length > 0) {
+        const backendPosts = res.data.data.content;
+        const backendIds = new Set(backendPosts.map((p) => p.id));
+        const filteredMock = mockFeedPosts.filter((p) => !backendIds.has(p.id));
+        setPosts([...backendPosts, ...filteredMock]);
+      } else {
+        setPosts(mockFeedPosts);
       }
     } catch (err) {
       console.error(err);
+      setPosts(mockFeedPosts);
     } finally {
       setLoadingPosts(false);
     }
@@ -79,7 +92,7 @@ const MainLayout = () => {
     try {
       const res = await api.get('/users/recommended');
       if (res.data.success) {
-        setRecommendedWidget(res.data.data.slice(0, 3));
+        setRecommendedWidget(res.data.data.slice(0, 5));
       }
     } catch (err) {
       console.error(err);
@@ -89,6 +102,7 @@ const MainLayout = () => {
   const handleSelectUser = (id) => {
     setSelectedUserId(id);
     setCurrentTab('profile');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSearch = (query) => {
@@ -108,26 +122,63 @@ const MainLayout = () => {
     setPosts(posts.filter((p) => p.id !== deletedId));
   };
 
-  return (
-    <div className="min-h-screen bg-gray-100 flex flex-col font-sans">
-      <Navbar currentTab={currentTab} setCurrentTab={(tab) => {
-        if (tab === 'profile') setSelectedUserId(null); // Reset to logged in user profile when clicking "Me"
-        setCurrentTab(tab);
-      }} onSearch={handleSearch} />
+  // Determine whether to use 3-column layout or wide 2-column layout for messages/projects
+  const isWideContent = currentTab === 'messages';
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
+  return (
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-200">
+      <Navbar 
+        currentTab={currentTab} 
+        setCurrentTab={(tab) => {
+          if (tab === 'profile') setSelectedUserId(null); // Reset to logged in user profile when clicking "Me"
+          setCurrentTab(tab);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }} 
+        onSearch={handleSearch} 
+      />
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full pb-20 lg:pb-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           {/* LEFT SIDEBAR (Profile Summary & Quick Stats) */}
           <div className="lg:col-span-3">
-            <Sidebar onNavigateProfile={() => {
-              setSelectedUserId(null);
-              setCurrentTab('profile');
-            }} />
+            <Sidebar 
+              onNavigateProfile={() => {
+                setSelectedUserId(null);
+                setCurrentTab('profile');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onNavigateProjects={() => {
+                setCurrentTab('projects');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onNavigateNetwork={() => {
+                setCurrentTab('network');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onAddGithub={() => {
+                setSelectedUserId(null);
+                setProfileInitialAction('github');
+                setCurrentTab('profile');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onAddProject={() => {
+                setSelectedUserId(null);
+                setProfileInitialAction('project');
+                setCurrentTab('profile');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onAddCert={() => {
+                setSelectedUserId(null);
+                setProfileInitialAction('cert');
+                setCurrentTab('profile');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
           </div>
 
           {/* MAIN DYNAMIC CONTENT AREA */}
-          <div className="lg:col-span-6">
+          <div className={isWideContent ? "lg:col-span-9" : "lg:col-span-6"}>
             
             {/* FEED TAB */}
             {currentTab === 'feed' && (
@@ -135,13 +186,14 @@ const MainLayout = () => {
                 <CreatePostBox onPostCreated={handlePostCreated} />
                 
                 {loadingPosts ? (
-                  <div className="bg-white rounded-xl p-8 text-center text-sm text-gray-500 shadow-xs border border-gray-200">
-                    Loading professional feed...
+                  <div className="space-y-4">
+                    <SkeletonPost />
+                    <SkeletonPost />
                   </div>
                 ) : posts.length === 0 ? (
-                  <div className="bg-white rounded-xl p-8 text-center shadow-xs border border-gray-200">
-                    <p className="text-gray-600 font-semibold text-sm">Your feed is empty.</p>
-                    <p className="text-gray-400 text-xs mt-1">Connect with other professionals or create a post to start!</p>
+                  <div className="bg-white dark:bg-[#131b2e] rounded-2xl p-8 text-center shadow-xs border border-gray-200 dark:border-slate-800">
+                    <p className="text-gray-600 dark:text-slate-300 font-semibold text-sm">Your feed is empty.</p>
+                    <p className="text-gray-400 dark:text-slate-500 text-xs mt-1">Connect with other professionals or create a post to start!</p>
                   </div>
                 ) : (
                   posts.map((post) => (
@@ -162,10 +214,25 @@ const MainLayout = () => {
               <NetworkView onSelectUser={handleSelectUser} />
             )}
 
+            {/* PROJECTS VIEW */}
+            {currentTab === 'projects' && (
+              <ProjectsView onSelectProject={() => {}} />
+            )}
+
+            {/* JOBS & OPPORTUNITIES VIEW */}
+            {currentTab === 'jobs' && (
+              <JobsView />
+            )}
+
+            {/* MESSAGES VIEW */}
+            {currentTab === 'messages' && (
+              <MessagesView />
+            )}
+
             {/* PROFILE TAB */}
             {currentTab === 'profile' && (
               loadingProfile || !targetProfile ? (
-                <div className="bg-white rounded-xl p-12 text-center text-sm text-gray-500 shadow-xs border border-gray-200">
+                <div className="bg-white dark:bg-[#131b2e] rounded-2xl p-12 text-center text-sm text-gray-500 dark:text-slate-400 shadow-xs border border-gray-200 dark:border-slate-800">
                   Loading profile details...
                 </div>
               ) : (
@@ -174,6 +241,8 @@ const MainLayout = () => {
                   isOwnProfile={targetProfile.id === user?.id}
                   onProfileReload={() => fetchUserProfile(targetProfile.id)}
                   onNavigateNetwork={() => setCurrentTab('network')}
+                  openModalOnMount={profileInitialAction}
+                  onClearInitialAction={() => setProfileInitialAction(null)}
                 />
               )
             )}
@@ -196,79 +265,29 @@ const MainLayout = () => {
 
           </div>
 
-          {/* RIGHT WIDGETS PANEL */}
-          <div className="lg:col-span-3 space-y-4 hidden lg:block">
-            {/* LinkSphere News & Trends */}
-            <div className="bg-white rounded-xl shadow-xs border border-gray-200 p-4">
-              <h3 className="font-bold text-sm text-gray-900 flex items-center justify-between mb-3">
-                <span>LinkSphere News</span>
-                <Sparkles className="h-4 w-4 text-amber-500" />
-              </h3>
-
-              <div className="space-y-3 text-xs">
-                <div>
-                  <h4 className="font-semibold text-gray-800 hover:text-blue-600 cursor-pointer">
-                    Java 21 Virtual Threads adoption surges
-                  </h4>
-                  <p className="text-gray-400 text-[11px] mt-0.5">Top Tech News • 1,420 readers</p>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800 hover:text-blue-600 cursor-pointer">
-                    Remote Work Trends in 2026
-                  </h4>
-                  <p className="text-gray-400 text-[11px] mt-0.5">Career Insights • 980 readers</p>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800 hover:text-blue-600 cursor-pointer">
-                    Spring Boot 3.2 Security Best Practices
-                  </h4>
-                  <p className="text-gray-400 text-[11px] mt-0.5">Engineering • 3,210 readers</p>
-                </div>
-              </div>
+          {/* RIGHT WIDGETS PANEL (Hidden when viewing wide content like Messages) */}
+          {!isWideContent && (
+            <div className="lg:col-span-3 space-y-4 hidden lg:block">
+              <RightSidebar 
+                recommendedUsers={recommendedWidget}
+                onSelectUser={handleSelectUser}
+                onNavigateJobs={() => {
+                  setCurrentTab('jobs');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                onNavigateNetwork={() => {
+                  setCurrentTab('network');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              />
             </div>
-
-            {/* Recommended Connections Box */}
-            <div className="bg-white rounded-xl shadow-xs border border-gray-200 p-4">
-              <h3 className="font-bold text-sm text-gray-900 mb-3">Add to your feed</h3>
-              
-              <div className="space-y-3">
-                {recommendedWidget.map((person) => (
-                  <div key={person.id} className="flex items-center space-x-2.5">
-                    {person.profileImage ? (
-                      <img src={person.profileImage} alt="" className="w-10 h-10 rounded-full object-cover" />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
-                        {person.firstName?.charAt(0)}
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <p 
-                        onClick={() => handleSelectUser(person.id)}
-                        className="font-semibold text-xs text-gray-900 truncate hover:text-blue-600 cursor-pointer"
-                      >
-                        {person.firstName} {person.lastName}
-                      </p>
-                      <p className="text-[11px] text-gray-500 truncate">{person.headline}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <button
-                onClick={() => setCurrentTab('network')}
-                className="w-full mt-3 pt-2 text-center text-xs font-semibold text-blue-600 hover:underline border-t border-gray-100 flex items-center justify-center"
-              >
-                <span>View all recommendations</span>
-                <ExternalLink className="h-3 w-3 ml-1" />
-              </button>
-            </div>
-          </div>
+          )}
 
         </div>
       </main>
 
-      <footer className="bg-white border-t border-gray-200 py-4 text-center text-xs text-gray-500">
-        LinkSphere Networking Platform &copy; 2026 — Built with Spring Boot 3 & React 18
+      <footer className="bg-white dark:bg-[#111827] border-t border-slate-200 dark:border-slate-800 py-4 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors">
+        LinkSphere Networking Platform &copy; 2026 — Verified Skills, Projects & Opportunities
       </footer>
     </div>
   );
@@ -300,7 +319,6 @@ const AppContent = () => {
     return authView === 'login' ? (
       <LoginPage 
         onNavigateRegister={() => setAuthView('register')} 
-        onReplayIntro={() => setShowIntro(true)}
       />
     ) : (
       <RegisterPage onNavigateLogin={() => setAuthView('login')} />
@@ -312,8 +330,10 @@ const AppContent = () => {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
