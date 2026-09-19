@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../services/api';
-import { syncUserToSupabase } from '../services/supabaseClient';
 
 const AuthContext = createContext();
 
@@ -26,8 +25,6 @@ export const AuthProvider = ({ children }) => {
       if (res.data.success) {
         setUser(res.data.data);
         localStorage.setItem('linksphere_user', JSON.stringify(res.data.data));
-        // Sync with Supabase users table
-        syncUserToSupabase(res.data.data);
       }
     } catch (err) {
       console.error('Failed to fetch current user profile:', err);
@@ -44,8 +41,6 @@ export const AuthProvider = ({ children }) => {
       setUser(userData);
       localStorage.setItem('linksphere_token', jwtToken);
       localStorage.setItem('linksphere_user', JSON.stringify(userData));
-      // Store user record in Supabase users table
-      await syncUserToSupabase(userData);
       return userData;
     }
   };
@@ -58,8 +53,6 @@ export const AuthProvider = ({ children }) => {
       setUser(userData);
       localStorage.setItem('linksphere_token', jwtToken);
       localStorage.setItem('linksphere_user', JSON.stringify(userData));
-      // Store user record in Supabase users table upon account creation
-      await syncUserToSupabase(userData);
       return userData;
     }
   };
