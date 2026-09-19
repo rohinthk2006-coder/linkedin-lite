@@ -22,6 +22,8 @@ public class UserDto {
     private String about;
     private String location;
     private String profileImage;
+    private String githubUrl;
+    private String portfolioUrl;
     private Role role;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
