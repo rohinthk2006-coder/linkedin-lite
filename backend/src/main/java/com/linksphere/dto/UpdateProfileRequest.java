@@ -15,4 +15,6 @@ public class UpdateProfileRequest {
     private String about;
     private String location;
     private String profileImage;
+    private String githubUrl;
+    private String portfolioUrl;
 }
