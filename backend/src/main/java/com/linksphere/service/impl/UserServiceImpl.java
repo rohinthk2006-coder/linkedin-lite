@@ -28,6 +28,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ConnectionRepository connectionRepository;
     private final EntityDtoMapper mapper;
+    private final com.linksphere.service.FileStorageService fileStorageService;
 
     @Override
     @Transactional(readOnly = true)
@@ -61,6 +62,8 @@ public class UserServiceImpl implements UserService {
         if (request.getAbout() != null) user.setAbout(request.getAbout());
         if (request.getLocation() != null) user.setLocation(request.getLocation());
         if (request.getProfileImage() != null) user.setProfileImage(request.getProfileImage());
+        if (request.getGithubUrl() != null) user.setGithubUrl(request.getGithubUrl());
+        if (request.getPortfolioUrl() != null) user.setPortfolioUrl(request.getPortfolioUrl());
 
         User updatedUser = userRepository.save(user);
         return mapper.toUserDto(updatedUser, currentUser, connectionRepository);
@@ -82,5 +85,24 @@ public class UserServiceImpl implements UserService {
         return users.stream()
                 .map(u -> mapper.toUserSummaryDto(u, currentUser, connectionRepository))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public UserDto uploadProfilePhoto(Long id, org.springframework.web.multipart.MultipartFile file, User currentUser) {
+        if (!currentUser.getId().equals(id)) {
+            throw new UnauthorizedException("You are not authorized to update another user's profile");
+        }
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+
+        if (file != null && !file.isEmpty()) {
+            String imageUrl = fileStorageService.storeFile(file);
+            user.setProfileImage(imageUrl);
+        }
+
+        User updatedUser = userRepository.save(user);
+        return mapper.toUserDto(updatedUser, currentUser, connectionRepository);
     }
 }
