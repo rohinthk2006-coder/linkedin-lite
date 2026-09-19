@@ -45,6 +45,10 @@ public class User {
     @Column(columnDefinition = "TEXT")
     private String profileImage;
 
+    private String githubUrl;
+
+    private String portfolioUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
