@@ -1,12 +1,14 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     --primary: #0a66c2;
     --primary-hover: #004182;
     --primary-light: #e8f2ff;
-    --dark-bg: #0f172a;
-    --card-bg: #1e293b;
+    --dark-bg: #0b0f19;
+    --card-bg: #111827;
     --accent: #38bdf8;
   }
 
@@ -15,10 +17,16 @@
     color: #1f2937;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     min-height: 100vh;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  html.dark body {
+    background-color: #0b0f19;
+    color: #f1f5f9;
   }
 }
 
-/* Custom Utilities for LinkSphere Premium Design */
+/* LinkSphere Design System Utilities */
 .glass-panel {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
@@ -26,13 +34,14 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
-.dark .glass-panel {
-  background: rgba(30, 41, 59, 0.9);
-  border-color: rgba(51, 65, 85, 0.8);
+html.dark .glass-panel {
+  background: rgba(17, 24, 39, 0.92);
+  border-color: rgba(55, 65, 81, 0.7);
+  box-shadow: 0 4px 12px -1px rgba(0, 0, 0, 0.35);
 }
 
 .gradient-heading {
-  background: linear-gradient(135deg, #0a66c2 0%, #0284c7 100%);
+  background: linear-gradient(135deg, #0a66c2 0%, #6366f1 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -42,18 +51,31 @@
   border-bottom: 2px solid #0a66c2;
 }
 
+html.dark .active-nav-link {
+  color: #38bdf8;
+  border-bottom-color: #38bdf8;
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 4px;
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
