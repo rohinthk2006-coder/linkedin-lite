@@ -89,6 +89,8 @@ public class EntityDtoMapper {
                 .about(user.getAbout())
                 .location(user.getLocation())
                 .profileImage(user.getProfileImage())
+                .githubUrl(user.getGithubUrl())
+                .portfolioUrl(user.getPortfolioUrl())
                 .role(user.getRole())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
