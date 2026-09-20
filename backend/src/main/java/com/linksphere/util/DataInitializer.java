@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
@@ -36,6 +37,16 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                seedData();
+            } catch (Exception e) {
+                log.error("Background data initialization error: {}", e.getMessage(), e);
+            }
+        });
+    }
+
+    private void seedData() {
         if (userRepository.count() > 0) {
             log.info("Database already seeded. Skipping DataInitializer.");
             return;
