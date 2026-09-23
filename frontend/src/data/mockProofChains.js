@@ -5,7 +5,7 @@ export const mockProofChains = {
     verifiedDate: "Feb 2026",
     endorsements: 24,
     credibilityScore: "98/100",
-    summary: "Demonstrated through certified curriculum, live production application (FoodGo), and algorithmic state-management assessment.",
+    summary: "Demonstrated through certified curriculum, production web applications, and algorithmic state-management assessment.",
     chain: [
       {
         step: 1,
@@ -31,10 +31,10 @@ export const mockProofChains = {
       {
         step: 3,
         type: "Project",
-        title: "FoodGo - Food Delivery Web Application",
+        title: "Full-Stack Web Application Architecture",
         issuer: "Portfolio Project",
         date: "Feb 10, 2026",
-        description: "Production codebase with responsive cart, live geolocation, dynamic feed, and secure checkout.",
+        description: "Production codebase with responsive UI, live data synchronization, dynamic feed, and secure API integration.",
         linkText: "Inspect Project",
         url: "#projects",
         verified: true,
@@ -42,12 +42,12 @@ export const mockProofChains = {
       {
         step: 4,
         type: "Repository",
-        title: "GitHub: rohinth-coder/foodgo-delivery",
+        title: "GitHub: Codebase & Architecture Audit",
         issuer: "GitHub Public Commit Audit",
         date: "Feb 14, 2026",
-        description: "142 verified Git commits, 8 releases, 96% test coverage with Jest and React Testing Library.",
+        description: "Verified Git commits, releases, clean components, and automated test coverage.",
         linkText: "Open Repository",
-        url: "https://github.com/rohinth-coder/foodgo-delivery",
+        url: "https://github.com",
         verified: true,
       },
       {

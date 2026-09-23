@@ -14,7 +14,6 @@ import { JobsView } from './components/JobsView';
 import { MessagesView } from './components/MessagesView';
 import { RightSidebar } from './components/RightSidebar';
 import { SkeletonPost } from './components/SkeletonLoader';
-import { mockFeedPosts } from './data/mockFeedPosts';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { IntroPage } from './pages/IntroPage';
@@ -58,17 +57,14 @@ const MainLayout = () => {
     setLoadingPosts(true);
     try {
       const res = await api.get('/posts/feed');
-      if (res.data.success && res.data.data?.content?.length > 0) {
-        const backendPosts = res.data.data.content;
-        const backendIds = new Set(backendPosts.map((p) => p.id));
-        const filteredMock = mockFeedPosts.filter((p) => !backendIds.has(p.id));
-        setPosts([...backendPosts, ...filteredMock]);
+      if (res.data.success && Array.isArray(res.data.data?.content)) {
+        setPosts(res.data.data.content);
       } else {
-        setPosts(mockFeedPosts);
+        setPosts([]);
       }
     } catch (err) {
-      console.error(err);
-      setPosts(mockFeedPosts);
+      console.error('Failed to fetch feed posts:', err);
+      setPosts([]);
     } finally {
       setLoadingPosts(false);
     }
@@ -111,7 +107,8 @@ const MainLayout = () => {
   };
 
   const handlePostCreated = (newPost) => {
-    setPosts([newPost, ...posts]);
+    if (!newPost) return;
+    setPosts((prev) => [newPost, ...prev.filter((p) => p.id !== newPost.id)]);
   };
 
   const handlePostUpdated = (updatedPost) => {

@@ -21,59 +21,6 @@ export const NotificationsView = ({ onSelectReference, onNavigateJobs, onNavigat
 
   const categories = ['All', 'Connections', 'Jobs', 'Profile', 'Achievements'];
 
-  const sampleEnrichedNotifications = [
-    {
-      id: 9001,
-      type: 'CONNECTION_ACCEPT',
-      category: 'Connections',
-      message: 'Alex Morgan accepted your connection invitation.',
-      timestamp: '15m ago',
-      isRead: false,
-      actionText: 'View Network',
-      actionHandler: onNavigateNetwork
-    },
-    {
-      id: 9002,
-      type: 'PROFILE_VIEW',
-      category: 'Profile',
-      message: 'Sarah Chen and 4 other professionals viewed your LinkSphere profile.',
-      timestamp: '2h ago',
-      isRead: false,
-      actionText: 'See Analytics',
-      actionHandler: onNavigateProfile
-    },
-    {
-      id: 9003,
-      type: 'SKILL_ENDORSEMENT',
-      category: 'Achievements',
-      message: 'You received a new endorsement for React on your Proof Chain.',
-      timestamp: '5h ago',
-      isRead: true,
-      actionText: 'Inspect Chain',
-      actionHandler: onNavigateProfile
-    },
-    {
-      id: 9004,
-      type: 'JOB_MATCH',
-      category: 'Jobs',
-      message: 'New 92% skill match internship: Frontend Developer Intern at NexGen Labs.',
-      timestamp: '1d ago',
-      isRead: true,
-      actionText: 'View Role',
-      actionHandler: onNavigateJobs
-    },
-    {
-      id: 9005,
-      type: 'PROFILE_STRENGTH',
-      category: 'Profile',
-      message: 'Your profile strength is at 72%. Add your GitHub link to reach All-Star status.',
-      timestamp: '2d ago',
-      isRead: true,
-      actionText: 'Complete Profile',
-      actionHandler: onNavigateProfile
-    }
-  ];
-
   useEffect(() => {
     fetchNotifications();
   }, []);
@@ -82,25 +29,24 @@ export const NotificationsView = ({ onSelectReference, onNavigateJobs, onNavigat
     setLoading(true);
     try {
       const res = await api.get('/notifications');
-      if (res.data.success && res.data.data.length > 0) {
-        // Merge backend notifications with enriched alerts
+      if (res.data.success && Array.isArray(res.data.data)) {
         const mappedBackend = res.data.data.map((n) => ({
           ...n,
           category: n.type?.includes('CONNECTION') ? 'Connections' : 'All',
-          timestamp: new Date(n.createdAt).toLocaleDateString(undefined, {
+          timestamp: n.createdAt ? new Date(n.createdAt).toLocaleDateString(undefined, {
             month: 'short',
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit'
-          })
+          }) : 'Just now'
         }));
-        setNotifications([...mappedBackend, ...sampleEnrichedNotifications]);
+        setNotifications(mappedBackend);
       } else {
-        setNotifications(sampleEnrichedNotifications);
+        setNotifications([]);
       }
     } catch (err) {
       console.warn('Notifications API note:', err.message);
-      setNotifications(sampleEnrichedNotifications);
+      setNotifications([]);
     } finally {
       setLoading(false);
     }

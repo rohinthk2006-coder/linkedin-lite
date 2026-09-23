@@ -28,6 +28,9 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (err) {
       console.error('Failed to fetch current user profile:', err);
+      if (err.response?.status === 401) {
+        logout();
+      }
     } finally {
       setLoading(false);
     }

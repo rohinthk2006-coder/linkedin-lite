@@ -1,13 +1,13 @@
 export const mockProjects = [
   {
     id: 1,
-    title: "FoodGo",
+    title: "QuickBite",
     tagline: "Food Ordering & Real-Time Delivery Platform",
     description: "A comprehensive full-stack food delivery application with real-time driver tracking, geolocation routing, payment checkout, and restaurant owner dashboard.",
     technologies: ["React", "Spring Boot", "PostgreSQL", "Tailwind CSS", "Redis"],
     thumbnail: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&auto=format&fit=crop&q=80",
-    githubUrl: "https://github.com/rohinth-coder/foodgo-delivery",
-    liveDemoUrl: "https://foodgo-preview.app",
+    githubUrl: "https://github.com/example/quickbite-delivery",
+    liveDemoUrl: "https://quickbite-preview.app",
     status: "Completed",
     featured: true,
     verifiedSkill: "React",

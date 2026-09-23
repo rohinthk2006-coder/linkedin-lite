@@ -43,7 +43,7 @@ export const mockEvents = [
     title: "Virtual Threads in Spring Boot 3.2",
     date: "Sep 24, 2026 • 6:30 PM",
     attendees: 420,
-    speaker: "Alex Morgan"
+    speaker: "LinkSphere Tech Lead"
   },
   {
     id: 2,

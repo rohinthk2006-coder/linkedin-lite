@@ -33,6 +33,15 @@ export const PostCard = ({ post, onPostUpdated, onPostDeleted, onSelectUser }) =
   const [sharedToast, setSharedToast] = useState(false);
 
   const isAuthor = currentUser?.id === post.author?.id;
+  const author = isAuthor && currentUser ? {
+    ...post.author,
+    id: currentUser.id,
+    firstName: currentUser.firstName,
+    lastName: currentUser.lastName,
+    headline: currentUser.headline || post.author?.headline,
+    profileImage: currentUser.profileImage !== undefined ? currentUser.profileImage : post.author?.profileImage,
+    role: currentUser.role || post.author?.role
+  } : post.author;
 
   // Extract category if enclosed in brackets e.g. "[Project Update] Rest of text"
   let detectedCategory = post.category || null;
@@ -188,32 +197,32 @@ export const PostCard = ({ post, onPostUpdated, onPostDeleted, onSelectUser }) =
       {/* Author Header Row */}
       <div className="flex justify-between items-start mb-3">
         <div 
-          onClick={() => onSelectUser && onSelectUser(post.author?.id)}
+          onClick={() => onSelectUser && onSelectUser(author?.id)}
           className="flex items-center space-x-3 cursor-pointer group"
         >
-          {post.author?.profileImage ? (
+          {author?.profileImage ? (
             <img
-              src={post.author.profileImage}
+              src={author.profileImage}
               alt=""
               className="w-11 h-11 rounded-full object-cover border border-gray-200 dark:border-slate-700 group-hover:ring-2 ring-blue-500 transition"
             />
           ) : (
             <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
-              {post.author?.firstName?.charAt(0)}
+              {author?.firstName?.charAt(0)}
             </div>
           )}
 
           <div>
             <div className="flex items-center gap-1.5">
               <h4 className="font-bold text-sm text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
-                {post.author?.firstName} {post.author?.lastName}
+                {author?.firstName} {author?.lastName}
               </h4>
-              {post.author?.role === 'ROLE_ADMIN' && (
+              {author?.role === 'ROLE_ADMIN' && (
                 <ShieldCheck className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" title="Administrator" />
               )}
             </div>
             <p className="text-[11px] text-gray-500 dark:text-slate-400 line-clamp-1 max-w-sm">
-              {post.author?.headline || 'LinkSphere Professional'}
+              {author?.headline || 'LinkSphere Member'}
             </p>
             <p className="text-[10px] text-gray-400 dark:text-slate-500 mt-0.5">
               {formatTimestamp(post.createdAt)} • Public
@@ -374,8 +383,12 @@ export const PostCard = ({ post, onPostUpdated, onPostDeleted, onSelectUser }) =
         </div>
         <div className="flex items-center space-x-3">
           <span>{commentCount} {commentCount === 1 ? 'comment' : 'comments'}</span>
-          <span>•</span>
-          <span>LinkSphere Network</span>
+          {author?.location && (
+            <>
+              <span>•</span>
+              <span>{author.location}</span>
+            </>
+          )}
         </div>
       </div>
 

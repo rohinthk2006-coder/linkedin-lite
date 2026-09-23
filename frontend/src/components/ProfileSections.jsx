@@ -359,19 +359,8 @@ export const ProfileSections = ({
 
   if (!targetProfile) return null;
 
-  // Derive default skills if targetProfile has empty array for rich prototype
-  const displayedSkills = targetProfile.skills && targetProfile.skills.length > 0
-    ? targetProfile.skills
-    : [
-        { id: 101, name: 'React' },
-        { id: 102, name: 'Spring Boot' },
-        { id: 103, name: 'Java' },
-        { id: 104, name: 'SQL' },
-        { id: 105, name: 'UI/UX' },
-        { id: 106, name: 'Git' }
-      ];
-
-  const profileStrength = targetProfile.profileCompleteness || 72;
+  const displayedSkills = targetProfile.skills || [];
+  const profileStrength = targetProfile.profileCompleteness ?? 0;
 
   return (
     <div className="space-y-6">
@@ -477,7 +466,7 @@ export const ProfileSections = ({
             </h1>
 
             <p className="text-xs sm:text-sm text-gray-700 dark:text-slate-300 font-medium mt-1 leading-relaxed">
-              {targetProfile.headline || 'Full-Stack Software Engineer • LinkSphere Core Contributor'}
+              {targetProfile.headline || 'LinkSphere Member'}
             </p>
 
             <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 dark:text-slate-400 mt-2.5">

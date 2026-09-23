@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { LogIn, UserCheck, Shield, Sparkles } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 import introLogo from '../assets/linksphere-intro.png';
 
 export const LoginPage = ({ onNavigateRegister }) => {
@@ -19,18 +19,6 @@ export const LoginPage = ({ onNavigateRegister }) => {
       await login(email, password); 
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid email or password');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDemoLogin = async (demoEmail) => {
-    setError('');
-    setLoading(true);
-    try {
-      await login(demoEmail, 'password123');
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed demo login');
     } finally {
       setLoading(false);
     }
@@ -101,34 +89,6 @@ export const LoginPage = ({ onNavigateRegister }) => {
               <span>{loading ? 'Signing in...' : 'Sign In'}</span>
             </button>
           </form>
-
-          {/* Quick Demo Logins Section */}
-          <div className="mt-6 pt-6 border-t border-slate-700/60">
-            <p className="text-xs font-semibold text-slate-400 mb-3 flex items-center justify-center gap-1">
-              <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-              Quick Demo One-Click Sign In
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                onClick={() => handleDemoLogin('alex.morgan@example.com')}
-                className="p-2 bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 rounded-lg text-[11px] font-medium text-slate-200 text-center transition"
-              >
-                Alex Morgan (User)
-              </button>
-              <button
-                onClick={() => handleDemoLogin('sarah.chen@example.com')}
-                className="p-2 bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 rounded-lg text-[11px] font-medium text-slate-200 text-center transition"
-              >
-                Sarah Chen (User)
-              </button>
-              <button
-                onClick={() => handleDemoLogin('admin@linksphere.com')}
-                className="p-2 bg-purple-900/40 hover:bg-purple-900/60 border border-purple-600/50 rounded-lg text-[11px] font-medium text-purple-200 text-center transition"
-              >
-                Admin User
-              </button>
-            </div>
-          </div>
 
           <div className="mt-6 text-center text-xs text-slate-400">
             Don't have an account?{' '}

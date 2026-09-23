@@ -10,7 +10,8 @@ import {
   Plus, 
   ChevronRight, 
   ExternalLink,
-  GraduationCap
+  GraduationCap,
+  Briefcase
 } from 'lucide-react';
 
 export const Sidebar = ({ 
@@ -22,10 +23,10 @@ export const Sidebar = ({
   onAddCert
 }) => {
   const { user } = useAuth();
-  const completeness = user?.profileCompleteness || 72;
-  const projectCount = user?.projectCount || 4;
-  const skillCount = user?.skillCount || 8;
-  const connectionCount = user?.connectionCount || 18;
+  const completeness = user?.profileCompleteness ?? 0;
+  const projectCount = user?.projects?.length ?? 0;
+  const skillCount = user?.skills?.length ?? 0;
+  const connectionCount = user?.connectionCount ?? 0;
 
   return (
     <div className="bg-white dark:bg-[#131b2e] rounded-2xl shadow-xs border border-gray-200 dark:border-slate-800 overflow-hidden transition-colors">
@@ -62,14 +63,21 @@ export const Sidebar = ({
         </h2>
 
         <p className="text-xs text-gray-600 dark:text-slate-300 mt-1 line-clamp-2">
-          {user?.headline || 'Full-Stack Developer • Student & Builder'}
+          {user?.headline || 'LinkSphere Member'}
         </p>
 
-        {/* Department / Field Tag */}
-        <div className="inline-flex items-center gap-1 px-2 py-0.5 mt-2 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 text-[10px] font-semibold border border-blue-100 dark:border-blue-900/50">
-          <GraduationCap className="w-3 h-3" />
-          <span>Computer Science & Engineering</span>
-        </div>
+        {/* Company / Department Tag */}
+        {user?.experiences?.[0]?.company ? (
+          <div className="inline-flex items-center gap-1 px-2 py-0.5 mt-2 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 text-[10px] font-semibold border border-blue-100 dark:border-blue-900/50">
+            <Briefcase className="w-3 h-3" />
+            <span>{user.experiences[0].company}</span>
+          </div>
+        ) : user?.educations?.[0]?.fieldOfStudy ? (
+          <div className="inline-flex items-center gap-1 px-2 py-0.5 mt-2 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 text-[10px] font-semibold border border-blue-100 dark:border-blue-900/50">
+            <GraduationCap className="w-3 h-3" />
+            <span>{user.educations[0].fieldOfStudy}</span>
+          </div>
+        ) : null}
 
         {user?.location && (
           <div className="flex items-center justify-center text-[11px] text-gray-500 dark:text-slate-400 mt-1.5">

@@ -207,7 +207,7 @@ export const ProjectsView = ({ onSelectProject }) => {
                   required
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  placeholder="e.g. FoodGo Delivery App"
+                  placeholder="e.g. Full-Stack Web Platform"
                   className="w-full text-xs p-2.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-hidden focus:border-blue-500"
                 />
               </div>
