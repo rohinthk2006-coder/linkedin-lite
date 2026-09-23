@@ -16,7 +16,7 @@ export const LoginPage = ({ onNavigateRegister }) => {
     setLoading(true);
 
     try {
-      await login(email, password);
+      await login(email, password); 
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid email or password');
     } finally {
